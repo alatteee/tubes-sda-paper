@@ -25,7 +25,8 @@ void addAkhir(address *head, infotype nilai) {
 void tampilList(address head) {
     address temp = head;
     while (temp != NULL) {
-        printf("Node\n"); // Cetak pointer saja untuk sekarang
-        temp = temp->next;
+        printf("%s -> ", (char *)temp->info);  
     }
+    printf("NULL\n");
 }
+
