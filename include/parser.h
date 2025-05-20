@@ -12,6 +12,4 @@ void searchPaperByKeyword(Paper *root, const char *keyword);
 void searchPaperByYear(Paper *root, int targetYear);
 
 
-
-
 #endif
