@@ -37,6 +37,18 @@ FieldNode *cariField(address head, const char *fieldName) {
     return NULL;
 }
 
+// Menghapus semua tanda kutip dari dalam string
+void cleanQuotes(char *str) {
+    char *src = str, *dst = str;
+    while (*src) {
+        if (*src != '"') {
+            *dst++ = *src;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
 // Load CSV dan bangun struktur data
 void loadData(const char *filename, address *fieldList) {
     FILE *fp = fopen(filename, "r");
@@ -49,18 +61,14 @@ void loadData(const char *filename, address *fieldList) {
     fgets(baris, sizeof(baris), fp); // skip header
 
     while (fgets(baris, sizeof(baris), fp)) {
-        // Parsing CSV
-        char *field = strtok(baris, ",");
-        char *title = strtok(NULL, ",");
-        char *inCitStr = strtok(NULL, ",");
-        char *yearStr = strtok(NULL, "\n");
+        char field[100], title[300];
+        int inCitations, year;
 
-        if (!field || !title || !inCitStr || !yearStr) continue;
+        int parsed = sscanf(baris, "%99[^,],%299[^,],%d,%d", field, title, &inCitations, &year);
+        if (parsed != 4) continue;
 
-        int inCitations = atoi(inCitStr);
-        int year = atoi(yearStr);
+        cleanQuotes(field);  // bersihkan tanda kutip sisa
 
-        // Cek apakah field sudah ada
         FieldNode *f = cariField(*fieldList, field);
         if (!f) {
             f = (FieldNode *)malloc(sizeof(FieldNode));
@@ -74,7 +82,7 @@ void loadData(const char *filename, address *fieldList) {
     }
 
     fclose(fp);
-    printf("✅ Data berhasil dimuat!\n");
+    printf("Data berhasil dimuat!\n");
 }
 
 void inorderPrint(Paper *root) {

@@ -10,7 +10,7 @@ int main() {
     initStack(&riwayat);
 
     address fieldList = NULL;
-    loadData("data_tubes_oke.csv", &fieldList); // Ganti sesuai nama file CSV
+    loadData("data_tubes_clean.csv", &fieldList); // Ganti sesuai nama file CSV
 
     int pilihan;
     do {
@@ -28,7 +28,7 @@ int main() {
 
         switch (pilihan) {
             case 1: {
-                printf("\n📂 Daftar Bidang (fieldOfStudy):\n");
+                printf("\n Daftar Bidang (fieldOfStudy):\n");
                 address temp = fieldList;
                 while (temp != NULL) {
                     FieldNode *f = (FieldNode *)temp->info;
@@ -48,7 +48,7 @@ int main() {
                 if (!target) {
                     printf("❌ Field '%s' tidak ditemukan.\n", cari);
                 } else {
-                    printf("\n📄 Daftar Paper dalam bidang: %s\n", cari);
+                    printf("\n Daftar Paper dalam bidang: %s\n", cari);
                     inorderPrint(target->bstRoot);
 
                     // simpan riwayat
@@ -74,7 +74,7 @@ int main() {
 
                 FieldNode *target = cariField(fieldList, cari);
                 if (!target) {
-                    printf("❌ Field '%s' tidak ditemukan.\n", cari);
+                    printf(" Field '%s' tidak ditemukan.\n", cari);
                 } else {
                     printf("\n🔥 Top %d paper dalam bidang %s:\n", jumlahAsli, target->fieldName);
                     printTopN(target->bstRoot, &jumlah);
