@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h> // untuk tolower
 #include "data_structures.h"
 #include "../ADTSLL/linkedlist.h"
 
@@ -24,12 +25,24 @@ Paper *insertPaper(Paper *root, Paper *newPaper) {
     return root;
 }
 
+// Fungsi bantu: bandingkan string tanpa memperhatikan huruf besar/kecil
+int compareIgnoreCase(const char *a, const char *b) {
+    while (*a && *b) {
+        if (tolower(*a) != tolower(*b)) {
+            return 0;
+        }
+        a++;
+        b++;
+    }
+    return *a == *b;
+}
+
 // Cari FieldNode di linked list
 FieldNode *cariField(address head, const char *fieldName) {
     address temp = head;
     while (temp != NULL) {
         FieldNode *f = (FieldNode *)temp->info;
-        if (strcmp(f->fieldName, fieldName) == 0) {
+        if (compareIgnoreCase(f->fieldName, fieldName)) {
             return f;
         }
         temp = temp->next;
@@ -37,7 +50,7 @@ FieldNode *cariField(address head, const char *fieldName) {
     return NULL;
 }
 
-// Menghapus semua tanda kutip dari dalam string
+// Bersihkan tanda kutip dari string (kalau ada)
 void cleanQuotes(char *str) {
     char *src = str, *dst = str;
     while (*src) {
@@ -67,7 +80,7 @@ void loadData(const char *filename, address *fieldList) {
         int parsed = sscanf(baris, "%99[^,],%299[^,],%d,%d", field, title, &inCitations, &year);
         if (parsed != 4) continue;
 
-        cleanQuotes(field);  // bersihkan tanda kutip sisa
+        cleanQuotes(field);  // hapus " di dalam fieldName
 
         FieldNode *f = cariField(*fieldList, field);
         if (!f) {

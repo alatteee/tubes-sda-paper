@@ -46,7 +46,7 @@ int main() {
 
                 FieldNode *target = cariField(fieldList, cari);
                 if (!target) {
-                    printf("❌ Field '%s' tidak ditemukan.\n", cari);
+                    printf(" Field '%s' tidak ditemukan.\n", cari);
                 } else {
                     printf("\n Daftar Paper dalam bidang: %s\n", cari);
                     inorderPrint(target->bstRoot);
@@ -76,7 +76,7 @@ int main() {
                 if (!target) {
                     printf(" Field '%s' tidak ditemukan.\n", cari);
                 } else {
-                    printf("\n🔥 Top %d paper dalam bidang %s:\n", jumlahAsli, target->fieldName);
+                    printf("\n Top %d paper dalam bidang %s:\n", jumlahAsli, target->fieldName);
                     printTopN(target->bstRoot, &jumlah);
 
                     char riwayatTop[120];
@@ -93,7 +93,7 @@ int main() {
                 fgets(keyword, sizeof(keyword), stdin);
                 keyword[strcspn(keyword, "\n")] = '\0';
 
-                printf("\n🔍 Hasil pencarian untuk kata: \"%s\"\n", keyword);
+                printf("\n Hasil pencarian untuk kata: \"%s\"\n", keyword);
                 address temp = fieldList;
                 while (temp != NULL) {
                     FieldNode *f = (FieldNode *)temp->info;
@@ -113,7 +113,7 @@ int main() {
                 scanf("%d", &targetYear);
                 getchar();
 
-                printf("\n📆 Paper tahun %d:\n", targetYear);
+                printf("\n Paper tahun %d:\n", targetYear);
                 address temp = fieldList;
                 while (temp != NULL) {
                     FieldNode *f = (FieldNode *)temp->info;
@@ -138,7 +138,7 @@ int main() {
                 break;
 
             default:
-                printf("❌ Pilihan tidak valid.\n");
+                printf(" Pilihan tidak valid.\n");
         }
 
     } while (pilihan != 0);
