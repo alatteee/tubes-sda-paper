@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Iinclude
 SRC = main.c src/parser.c ADTSLL/linkedlist.c ADTstack/stack.c
 OBJ = $(SRC:.c=.o)
 
-# Nama executable (Windows)
+# Nama executable
 EXEC = app.exe
 
 # Rule utama
@@ -24,9 +24,6 @@ $(EXEC): $(OBJ)
 clean:
 	del /Q $(OBJ) $(EXEC) 2>nul
 
-# Jalankan program (Windows)
+# Jalankan program di terminal eksternal
 run: all
-	app.exe
-
-
-
+	start cmd /k $(EXEC)
