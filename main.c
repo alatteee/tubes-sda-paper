@@ -10,7 +10,7 @@ int main() {
     initStack(&riwayat);
 
     address fieldList = NULL;
-    loadData("data_tubes_sample.csv", &fieldList); // Ganti sesuai nama file CSV
+    loadData("data_tubes_oke.csv", &fieldList); // Ganti sesuai nama file CSV
 
     int pilihan;
     do {

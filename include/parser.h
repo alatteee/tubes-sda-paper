@@ -11,7 +11,4 @@ void printTopN(Paper *root, int *n);
 void searchPaperByKeyword(Paper *root, const char *keyword);
 void searchPaperByYear(Paper *root, int targetYear);
 
-
-
-
 #endif

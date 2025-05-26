@@ -28,5 +28,11 @@ bool isStackEmpty(Stack *s) {
 }
 
 void printStack(Stack *s) {
-    tampilList(s->top);
+    address temp = s->top;
+    while (temp != NULL) {
+        printf("%s -> ", (char *)temp->info);  // 🟢 PAKAI (char *) CASTING!
+        temp = temp->next;
+    }
+    printf("NULL\n");
 }
+
