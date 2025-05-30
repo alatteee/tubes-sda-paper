@@ -29,9 +29,10 @@ int main() {
         switch (pilihan) {
             case 1:
                 tampilkanSemuaField(fieldList);
+                push(&riwayat, strdup("Lihat semua fieldOfStudy"));
                 break;
             case 2:
-                menuField(fieldList, &riwayat);
+                menuField(fieldList, &riwayat, stopwords);
                 break;
             case 3:
                 printf("\n Riwayat Pencarian:\n");

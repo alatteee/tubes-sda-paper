@@ -1,5 +1,1 @@
-gcc -o app.exe main.c \
-    src/*.c \
-    ADTstack/*.c \
-    ADTSLL/*.c \
-    -Iinclude
+gcc -o app.exe main.c src/parser.c src/menu_handler.c src/stopwords.c ADTstack/stack.c ADTSLL/linkedlist.c -Iinclude

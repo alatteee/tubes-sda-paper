@@ -4,9 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "data_structures.h"
-#include "stack.h"
-#include "parser.h"
+#include "../include/data_structures.h"
+#include "../include/menu_handler.h"
+#include "../ADTstack/stack.h"
+#include "../include/parser.h"
+
 
 void tampilkanSemuaField(FieldNode *fieldList) {
     printf("\n Daftar Bidang (fieldOfStudy):\n");
@@ -46,20 +48,32 @@ void tampilTopNPaper(PaperNode *paperList, int n) {
     }
 }
 
-void cariKeyword(PaperNode *paperList, const char *keyword) {
+void cariKeyword(PaperNode *paperList, const char *keyword, StopwordNode *stopwords) {
+    if (isStopWord(keyword, stopwords)) {
+        printf("Kata kunci '%s' adalah stopword dan tidak digunakan dalam pencarian.\n", keyword);
+        return;
+    }
+
+    int ditemukan = 0;
     PaperNode *p = paperList;
     while (p != NULL) {
         KeywordNode *k = p->keywordList;
         while (k != NULL) {
             if (compareIgnoreCase(k->keyword, keyword)) {
                 printf("- \"%s\" (%d sitasi, %d)\n", p->title, p->inCitations, p->year);
+                ditemukan = 1;
                 break;
             }
             k = k->next;
         }
         p = p->next;
     }
+
+    if (!ditemukan) {
+        printf("Tidak ada paper yang mengandung keyword '%s'.\n", keyword);
+    }
 }
+
 
 void cariTahun(PaperNode *paperList, int tahun) {
     PaperNode *p = paperList;
@@ -71,7 +85,7 @@ void cariTahun(PaperNode *paperList, int tahun) {
     }
 }
 
-void submenuField(FieldNode *target, Stack *riwayat) {
+void submenuField(FieldNode *target, Stack *riwayat, StopwordNode *stopwords){
     int sub;
     do {
         printf("\n===== Menu Field: %s =====\n", target->fieldName);
@@ -109,8 +123,10 @@ void submenuField(FieldNode *target, Stack *riwayat) {
                 printf("Masukkan keyword: ");
                 fgets(key, sizeof(key), stdin);
                 key[strcspn(key, "\n")] = '\0';
+
                 printf("\n Paper dengan keyword '%s' di bidang %s:\n", key, target->fieldName);
-                cariKeyword(target->paperList, key);
+                cariKeyword(target->paperList, key, stopwords);
+
                 char r[150];
                 sprintf(r, "Cari keyword '%s' di %s", key, target->fieldName);
                 push(riwayat, strdup(r));
@@ -137,7 +153,7 @@ void submenuField(FieldNode *target, Stack *riwayat) {
     } while (sub != 5);
 }
 
-void menuField(FieldNode *fieldList, Stack *riwayat) {
+void menuField(FieldNode *fieldList, Stack *riwayat, StopwordNode *stopwords) {
     char cari[100];
     printf("Masukkan fieldOfStudy: ");
     fgets(cari, sizeof(cari), stdin);
@@ -150,7 +166,7 @@ void menuField(FieldNode *fieldList, Stack *riwayat) {
         char riwayatStr[120];
         sprintf(riwayatStr, "Masuk Field: %s", target->fieldName);
         push(riwayat, strdup(riwayatStr));
-        submenuField(target, riwayat);
+        submenuField(target, riwayat, stopwords);
     }
 }
 
