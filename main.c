@@ -35,8 +35,7 @@ int main() {
                 menuField(fieldList, &riwayat, stopwords);
                 break;
             case 3:
-                printf("\n Riwayat Pencarian:\n");
-                printStack(&riwayat);
+                tampilkanRiwayat(&riwayat);
                 break;
             case 0:
                 printf("Terima kasih telah menggunakan aplikasi!\n");

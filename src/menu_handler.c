@@ -48,42 +48,74 @@ void tampilTopNPaper(PaperNode *paperList, int n) {
     }
 }
 
-void cariKeyword(PaperNode *paperList, const char *keyword, StopwordNode *stopwords) {
-    if (isStopWord(keyword, stopwords)) {
-        printf("Kata kunci '%s' adalah stopword dan tidak digunakan dalam pencarian.\n", keyword);
+void cariKeyword(PaperNode *paperList, const char *keywordInput, StopwordNode *stopwords) {
+    char inputCopy[256];
+    strcpy(inputCopy, keywordInput);
+
+    // Pisahkan keyword berdasarkan spasi
+    char *keywords[20];
+    int count = 0;
+
+    char *token = strtok(inputCopy, " ");
+    while (token != NULL && count < 20) {
+        if (!isStopWord(token, stopwords)) {
+            keywords[count++] = token;
+        }
+        token = strtok(NULL, " ");
+    }
+
+    if (count == 0) {
+        printf("Semua keyword adalah stopword atau kosong.\n");
         return;
     }
 
     int ditemukan = 0;
     PaperNode *p = paperList;
     while (p != NULL) {
-        KeywordNode *k = p->keywordList;
-        while (k != NULL) {
-            if (compareIgnoreCase(k->keyword, keyword)) {
+        KeywordNode *start = p->keywordList;
+
+        while (start != NULL) {
+            KeywordNode *curr = start;
+            int i = 0;
+            while (curr != NULL && i < count && compareIgnoreCase(curr->keyword, keywords[i])) {
+                curr = curr->next;
+                i++;
+            }
+
+            if (i == count) {  // Semua keyword cocok dan berurutan
                 printf("- \"%s\" (%d sitasi, %d)\n", p->title, p->inCitations, p->year);
                 ditemukan = 1;
                 break;
             }
-            k = k->next;
+
+            start = start->next;
+        }
+
+        p = p->next;
+    }
+
+    if (!ditemukan) {
+        printf("Tidak ada paper yang mengandung keyword '%s'.\n", keywordInput);
+    }
+}
+
+void cariTahun(PaperNode *paperList, int tahun) {
+    int ditemukan = 0;
+    PaperNode *p = paperList;
+
+    while (p != NULL) {
+        if (p->year == tahun) {
+            printf("- \"%s\" (%d sitasi, %d)\n", p->title, p->inCitations, p->year);
+            ditemukan = 1;
         }
         p = p->next;
     }
 
     if (!ditemukan) {
-        printf("Tidak ada paper yang mengandung keyword '%s'.\n", keyword);
+        printf("Tidak ada paper yang diterbitkan pada tahun %d.\n", tahun);
     }
 }
 
-
-void cariTahun(PaperNode *paperList, int tahun) {
-    PaperNode *p = paperList;
-    while (p != NULL) {
-        if (p->year == tahun) {
-            printf("- \"%s\" (%d sitasi, %d)\n", p->title, p->inCitations, p->year);
-        }
-        p = p->next;
-    }
-}
 
 void submenuField(FieldNode *target, Stack *riwayat, StopwordNode *stopwords){
     int sub;
@@ -167,6 +199,21 @@ void menuField(FieldNode *fieldList, Stack *riwayat, StopwordNode *stopwords) {
         sprintf(riwayatStr, "Masuk Field: %s", target->fieldName);
         push(riwayat, strdup(riwayatStr));
         submenuField(target, riwayat, stopwords);
+    }
+}
+
+void tampilkanRiwayat(Stack *riwayat) {
+    printf("\n===== Riwayat Pencarian =====\n");
+
+    if (isStackEmpty(riwayat)) {
+        printf("Belum ada riwayat pencarian.\n");
+        return;
+    }
+
+    address curr = riwayat->top;
+    while (curr != NULL) {
+        printf("%s\n", (char *)curr->info);  // Cast karena info-nya void*
+        curr = curr->next;
     }
 }
 
