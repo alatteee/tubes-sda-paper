@@ -19,17 +19,62 @@ void tampilkanSemuaField(FieldNode *fieldList) {
     }
 }
 
-void tampilSemuaPaper(PaperNode *paperList) {
-    PaperNode *p = paperList;
-    int nomor = 1;
-    while (p != NULL) {
-        printf("%d. Judul     : %s\n", nomor, p->title);
-        printf("   Tahun     : %d\n", p->year);
-        printf("   InCitations : %d\n", p->inCitations);
-        printf("--------------------------------------------------\n");
-        nomor++;
-        p = p->next;
+int hitungTotalPaper(PaperNode *paperList) {
+    int total = 0;
+    while (paperList) {
+        total++;
+        paperList = paperList->next;
     }
+    return total;
+}
+
+
+void tampilSemuaPaper(PaperNode *paperList) {
+    int page = 0;
+    int perPage = 10;
+    char command;
+    PaperNode *current = paperList;
+
+    int totalPaper = hitungTotalPaper(paperList);
+    int totalPage = (totalPaper + perPage - 1) / perPage; // pembulatan ke atas
+
+    do {
+        system("cls"); // clear screen
+        printf("===== Daftar Paper (Halaman %d dari %d) =====\n", page + 1, totalPage);
+
+        PaperNode *temp = current;
+        int count = 0;
+        int nomor = page * perPage + 1;
+
+        while (temp != NULL && count < perPage) {
+            printf("%d. Judul       : %s\n", nomor++, temp->title);
+            printf("   Tahun       : %d\n", temp->year);
+            printf("   InCitations : %d\n", temp->inCitations);
+            printf("--------------------------------------------------\n");
+            temp = temp->next;
+            count++;
+        }
+
+        printf("[n] Next | [p] Previous | [x] Exit: ");
+        scanf(" %c", &command);
+        getchar();
+
+        if (command == 'n' && page < totalPage - 1) {
+            int skip = perPage;
+            while (current != NULL && skip--) {
+                current = current->next;
+            }
+            page++;
+        } else if (command == 'p' && page > 0) {
+            current = paperList;
+            int back = (page - 1) * perPage;
+            while (back-- && current != NULL) {
+                current = current->next;
+            }
+            page--;
+        }
+
+    } while (command != 'x' && current != NULL);
 }
 
 
