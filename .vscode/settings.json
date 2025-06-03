@@ -58,6 +58,8 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
     "linkedlist.h": "c",
-    "parser.h": "c"
+    "parser.h": "c",
+    "stopwords.h": "c",
+    "data_structures.h": "c"
   }
 }

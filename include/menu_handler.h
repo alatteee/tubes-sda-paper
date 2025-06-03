@@ -11,5 +11,6 @@ void cariKeyword(PaperNode *paperList, const char *keyword, StopwordNode *stopwo
 void tampilSemuaPaper(PaperNode *paperList);
 void tampilTopNPaper(PaperNode *paperList, int n);
 void cariTahun(PaperNode *paperList, int tahun);
+void tampilkanRiwayat(Stack *riwayat);
 
 #endif

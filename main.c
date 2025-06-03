@@ -17,7 +17,9 @@ int main() {
 
     int pilihan;
     do {
-        printf("\n===== MENU UTAMA =====\n");
+        printf("=========================================\n");
+        printf("                MENU UTAMA               \n");
+        printf("=========================================\n");
         printf("1. Tampilkan semua bidang fieldOfStudy\n");
         printf("2. Telusuri FieldOfStudy tertentu\n");
         printf("3. Lihat riwayat pencarian\n");
@@ -35,8 +37,7 @@ int main() {
                 menuField(fieldList, &riwayat, stopwords);
                 break;
             case 3:
-                printf("\n Riwayat Pencarian:\n");
-                printStack(&riwayat);
+                tampilkanRiwayat(&riwayat);
                 break;
             case 0:
                 printf("Terima kasih telah menggunakan aplikasi!\n");
