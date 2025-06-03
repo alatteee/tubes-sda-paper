@@ -88,14 +88,17 @@ PaperNode *buatPaper(const char *title, int inCitations, int year, StopwordNode 
 }
 
 // Tambah PaperNode ke akhir daftar paper
-void tambahPaper(PaperNode **head, PaperNode *baru) {
-    if (*head == NULL) {
-        *head = baru;
-    } else {
-        PaperNode *temp = *head;
-        while (temp->next != NULL) temp = temp->next;
-        temp->next = baru;
+void tambahPaper(FieldNode *field, PaperNode *newPaper) {
+    if (!field || !newPaper) return;
+
+    PaperNode **current = &(field->paperList);
+
+    while (*current && (*current)->inCitations > newPaper->inCitations) {
+        current = &((*current)->next);
     }
+
+    newPaper->next = *current;
+    *current = newPaper;
 }
 
 // Tambah FieldNode ke akhir fieldList
@@ -140,7 +143,7 @@ void loadData(const char *filename, FieldNode **fieldList, StopwordNode *stopwor
         }
 
         PaperNode *p = buatPaper(title, inCitations, year, stopwords);
-        tambahPaper(&(f->paperList), p);
+        tambahPaper(f, p);
     }
 
     fclose(fp);
