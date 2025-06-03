@@ -21,11 +21,17 @@ void tampilkanSemuaField(FieldNode *fieldList) {
 
 void tampilSemuaPaper(PaperNode *paperList) {
     PaperNode *p = paperList;
+    int nomor = 1;
     while (p != NULL) {
-        printf("- \"%s\" (%d sitasi, %d)\n", p->title, p->inCitations, p->year);
+        printf("%d. Judul     : %s\n", nomor, p->title);
+        printf("   Tahun     : %d\n", p->year);
+        printf("   InCitations : %d\n", p->inCitations);
+        printf("--------------------------------------------------\n");
+        nomor++;
         p = p->next;
     }
 }
+
 
 void tampilTopNPaper(PaperNode *paperList, int n) {
     for (int i = 0; i < n; i++) {
@@ -37,16 +43,22 @@ void tampilTopNPaper(PaperNode *paperList, int n) {
             p = p->next;
         }
         if (max) {
-            printf("- \"%s\" (%d sitasi, %d)\n", max->title, max->inCitations, max->year);
+            printf("%d. Judul       : %s\n", i + 1, max->title);
+            printf("   Tahun       : %d\n", max->year);
+            printf("   InCitations : %d\n", max->inCitations);
+            printf("--------------------------------------------------\n");
             max->inCitations = -1;
         }
     }
+
+    // Reset nilai citation agar tidak -1
     PaperNode *reset = paperList;
     while (reset != NULL) {
         if (reset->inCitations == -1) reset->inCitations = 0;
         reset = reset->next;
     }
 }
+
 
 void cariKeyword(PaperNode *paperList, const char *keywordInput, StopwordNode *stopwords) {
     char inputCopy[256];
@@ -83,7 +95,11 @@ void cariKeyword(PaperNode *paperList, const char *keywordInput, StopwordNode *s
             }
 
             if (i == count) {  // Semua keyword cocok dan berurutan
-                printf("- \"%s\" (%d sitasi, %d)\n", p->title, p->inCitations, p->year);
+                printf("%d. Judul       : %s\n", ditemukan + 1, p->title);
+                printf("   Tahun       : %d\n", p->year);
+                printf("   InCitations : %d\n", p->inCitations);
+                printf("--------------------------------------------------\n");
+
                 ditemukan = 1;
                 break;
             }
@@ -105,7 +121,12 @@ void cariTahun(PaperNode *paperList, int tahun) {
 
     while (p != NULL) {
         if (p->year == tahun) {
-            printf("- \"%s\" (%d sitasi, %d)\n", p->title, p->inCitations, p->year);
+            printf("%d. Judul       : %s\n", ditemukan + 1, p->title);
+            printf("   Tahun       : %d\n", p->year);
+            printf("   InCitations : %d\n", p->inCitations);
+            printf("--------------------------------------------------\n");
+            ditemukan++;
+
             ditemukan = 1;
         }
         p = p->next;
@@ -120,7 +141,9 @@ void cariTahun(PaperNode *paperList, int tahun) {
 void submenuField(FieldNode *target, Stack *riwayat, StopwordNode *stopwords){
     int sub;
     do {
-        printf("\n===== Menu Field: %s =====\n", target->fieldName);
+        printf("=========================================\n");
+        printf("        Menu Field: %s    \n", target->fieldName);
+        printf("=========================================\n");
         printf("1. Tampilkan semua judul paper\n");
         printf("2. Tampilkan Top N paper\n");
         printf("3. Cari paper berdasarkan keyword\n");
@@ -203,7 +226,9 @@ void menuField(FieldNode *fieldList, Stack *riwayat, StopwordNode *stopwords) {
 }
 
 void tampilkanRiwayat(Stack *riwayat) {
-    printf("\n===== Riwayat Pencarian =====\n");
+    printf("=========================================\n");
+    printf("             Riwayat Pencarian           \n");
+    printf("=========================================\n");
 
     if (isStackEmpty(riwayat)) {
         printf("Belum ada riwayat pencarian.\n");
