@@ -182,6 +182,36 @@ void cariTahun(PaperNode *paperList, int tahun) {
     }
 }
 
+int getValidInt(const char *prompt) {
+    char input[100];
+    int value;
+    while (1) {
+        printf("%s", prompt);
+        if (fgets(input, sizeof(input), stdin)) {
+            if (sscanf(input, "%d", &value) == 1 && value > 0) {
+                return value;
+            } else {
+                printf("Input tidak valid! Masukkan angka yang benar.\n");
+            }
+        }
+    }
+}
+
+int getValidYear(const char *prompt) {
+    char input[100];
+    int value;
+    while (1) {
+        printf("%s", prompt);
+        if (fgets(input, sizeof(input), stdin)) {
+            if (sscanf(input, "%d", &value) == 1 && value >= 1800 && value <= 2025) {
+                return value;
+            } else {
+                printf("Input tidak valid! Masukkan tahun antara 1800 dan 2025.\n");
+                while (getchar() != '\n');
+            }
+        }
+    }
+}
 
 void submenuField(FieldNode *target, Stack *riwayat, StopwordNode *stopwords){
     int sub;
@@ -208,10 +238,7 @@ void submenuField(FieldNode *target, Stack *riwayat, StopwordNode *stopwords){
                 break;
             }
             case 2: {
-                int n;
-                printf("Masukkan jumlah top paper: ");
-                scanf("%d", &n);
-                getchar();
+                int n = getValidInt("Masukkan jumlah top paper: ");
                 tampilTopNPaper(target->paperList, n);
                 char r[150];
                 sprintf(r, "Top %d paper - %s", n, target->fieldName);
@@ -233,10 +260,7 @@ void submenuField(FieldNode *target, Stack *riwayat, StopwordNode *stopwords){
                 break;
             }
             case 4: {
-                int tahun;
-                printf("Masukkan tahun: ");
-                scanf("%d", &tahun);
-                getchar();
+                int tahun = getValidYear("Masukkan tahun: "); // Validasi input tahun
                 printf("\n Paper tahun %d di bidang %s:\n", tahun, target->fieldName);
                 cariTahun(target->paperList, tahun);
                 char r[150];
