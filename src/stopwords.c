@@ -4,32 +4,34 @@
 #include "data_structures.h"
 #include "../include/stopwords.h"
 
+// Fungsi untuk memuat stopwords dari file eksternal ke dalam linked list
 void loadStopwords(const char *filename, StopwordNode **head) {
-    FILE *fp = fopen(filename, "r");
+    FILE *fp = fopen(filename, "r");  // Buka file stopwords dalam mode read
     if (!fp) {
         printf("Gagal membuka file stopwords: %s\n", filename);
         return;
     }
 
-    char buffer[100];
+    char buffer[100];  // Buffer untuk menyimpan setiap baris (kata)
     while (fgets(buffer, sizeof(buffer), fp)) {
-        buffer[strcspn(buffer, "\n")] = 0; // hapus newline
+        buffer[strcspn(buffer, "\n")] = 0;  // Hapus karakter newline di akhir baris
 
+        // Alokasi memori untuk node baru dan salin kata ke dalamnya
         StopwordNode *baru = malloc(sizeof(StopwordNode));
-        baru->word = strdup(buffer);
+        baru->word = strdup(buffer);  // Duplikat string dari buffer
         baru->next = NULL;
 
-        // Tambahkan ke akhir list
+        // Tambahkan node ke akhir linked list
         if (*head == NULL) {
-            *head = baru;
+            *head = baru;  // Jika list kosong, node menjadi head
         } else {
             StopwordNode *curr = *head;
-            while (curr->next != NULL)
+            while (curr->next != NULL)  // Iterasi ke node terakhir
                 curr = curr->next;
-            curr->next = baru;
+            curr->next = baru;  // Tambahkan node baru di akhir
         }
     }
 
-    fclose(fp);
+    fclose(fp);  // Tutup file setelah selesai membaca
     printf("Stopwords berhasil dimuat!\n");
 }

@@ -4,31 +4,31 @@
 #include <ctype.h>
 #include "data_structures.h"
 
-// Fungsi bantu: bandingkan string tanpa memperhatikan huruf besar/kecil
+// Fungsi bantu: membandingkan dua string tanpa memperhatikan huruf besar/kecil
 int compareIgnoreCase(const char *a, const char *b) {
     while (*a && *b) {
         if (tolower(*a) != tolower(*b)) {
-            return 0;
+            return 0;  // Tidak sama
         }
         a++;
         b++;
     }
-    return *a == *b;
+    return *a == *b;  // Pastikan keduanya berakhir bersama
 }
 
-// Bersihkan tanda kutip dari string (kalau ada)
+// Menghapus tanda kutip dari string (jika ada)
 void cleanQuotes(char *str) {
     char *src = str, *dst = str;
     while (*src) {
         if (*src != '"') {
-            *dst++ = *src;
+            *dst++ = *src;  // Salin karakter kecuali tanda kutip
         }
         src++;
     }
-    *dst = '\0';
+    *dst = '\0';  // Tambahkan null-terminator
 }
 
-// Cek apakah kata termasuk stopword
+// Mengecek apakah kata adalah stopword (mengabaikan kapitalisasi)
 int isStopWord(const char *word, StopwordNode *stopwords) {
     StopwordNode *curr = stopwords;
     while (curr != NULL) {
@@ -38,7 +38,7 @@ int isStopWord(const char *word, StopwordNode *stopwords) {
     return 0;
 }
 
-// Cari FieldNode
+// Mencari FieldNode berdasarkan nama field (tanpa kapitalisasi sensitif)
 FieldNode *cariField(FieldNode *head, const char *fieldName) {
     while (head != NULL) {
         if (compareIgnoreCase(head->fieldName, fieldName)) {
@@ -49,14 +49,14 @@ FieldNode *cariField(FieldNode *head, const char *fieldName) {
     return NULL;
 }
 
-// Buat KeywordNode dan tambah ke list
+// Membuat KeywordNode baru dan menambahkannya ke akhir list
 void tambahKeyword(KeywordNode **head, const char *word) {
     KeywordNode *baru = malloc(sizeof(KeywordNode));
-    baru->keyword = strdup(word);
+    baru->keyword = strdup(word);  // Duplikat kata
     baru->next = NULL;
 
     if (*head == NULL) {
-        *head = baru;
+        *head = baru;  // Langsung jadi head
     } else {
         KeywordNode *temp = *head;
         while (temp->next != NULL) temp = temp->next;
@@ -64,7 +64,7 @@ void tambahKeyword(KeywordNode **head, const char *word) {
     }
 }
 
-// Buat PaperNode dan isi keywordList
+// Membuat PaperNode dari judul dan menambahkan keyword yang bukan stopword
 PaperNode *buatPaper(const char *title, int inCitations, int year, StopwordNode *stopwords) {
     PaperNode *p = malloc(sizeof(PaperNode));
     p->title = strdup(title);
@@ -73,6 +73,7 @@ PaperNode *buatPaper(const char *title, int inCitations, int year, StopwordNode 
     p->next = NULL;
     p->keywordList = NULL;
 
+    // Tokenisasi judul untuk ekstrak keyword
     char judulCopy[300];
     strcpy(judulCopy, title);
 
@@ -87,12 +88,13 @@ PaperNode *buatPaper(const char *title, int inCitations, int year, StopwordNode 
     return p;
 }
 
-// Tambah PaperNode ke akhir daftar paper
+// Menambahkan PaperNode ke dalam field, dengan urutan berdasarkan inCitations menurun
 void tambahPaper(FieldNode *field, PaperNode *newPaper) {
     if (!field || !newPaper) return;
 
     PaperNode **current = &(field->paperList);
 
+    // Sisipkan berdasarkan urutan descending inCitations
     while (*current && (*current)->inCitations > newPaper->inCitations) {
         current = &((*current)->next);
     }
@@ -101,10 +103,10 @@ void tambahPaper(FieldNode *field, PaperNode *newPaper) {
     *current = newPaper;
 }
 
-// Tambah FieldNode ke akhir fieldList
+// Menambahkan FieldNode ke akhir fieldList
 void tambahField(FieldNode **head, FieldNode *baru) {
     if (*head == NULL) {
-        *head = baru;
+        *head = baru;  // Langsung jadi head
     } else {
         FieldNode *temp = *head;
         while (temp->next != NULL) temp = temp->next;
@@ -112,7 +114,7 @@ void tambahField(FieldNode **head, FieldNode *baru) {
     }
 }
 
-// Load CSV dan bangun struktur
+// Membaca file CSV dan membangun struktur FieldNode dan PaperNode
 void loadData(const char *filename, FieldNode **fieldList, StopwordNode *stopwords) {
     FILE *fp = fopen(filename, "r");
     if (!fp) {
@@ -121,18 +123,21 @@ void loadData(const char *filename, FieldNode **fieldList, StopwordNode *stopwor
     }
 
     char baris[1024];
-    fgets(baris, sizeof(baris), fp); // skip header
+    fgets(baris, sizeof(baris), fp); // Lewati baris header CSV
 
+    // Baca setiap baris data
     while (fgets(baris, sizeof(baris), fp)) {
         char field[100], title[300];
         int inCitations, year;
 
+        // Parsing CSV berdasarkan format: field,title,inCitations,year
         int parsed = sscanf(baris, "%99[^,],%299[^,],%d,%d", field, title, &inCitations, &year);
-        if (parsed != 4) continue;
+        if (parsed != 4) continue;  // Skip baris rusak
 
         cleanQuotes(field);
         cleanQuotes(title);
 
+        // Cari field, jika tidak ada buat baru
         FieldNode *f = cariField(*fieldList, field);
         if (!f) {
             f = malloc(sizeof(FieldNode));
@@ -142,6 +147,7 @@ void loadData(const char *filename, FieldNode **fieldList, StopwordNode *stopwor
             tambahField(fieldList, f);
         }
 
+        // Buat paper dan tambahkan ke field
         PaperNode *p = buatPaper(title, inCitations, year, stopwords);
         tambahPaper(f, p);
     }

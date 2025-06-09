@@ -10,15 +10,17 @@
 #include "../include/parser.h"
 
 
+// Menampilkan semua bidang studi
 void tampilkanSemuaField(FieldNode *fieldList) {
     printf("\n Daftar Bidang (fieldOfStudy):\n");
     FieldNode *temp = fieldList;
     while (temp != NULL) {
-        printf("- %s\n", temp->fieldName);
-        temp = temp->next;
+        printf("- %s\n", temp->fieldName);  // Cetak nama field
+        temp = temp->next;                 // Pindah ke field berikutnya
     }
 }
 
+// Menghitung jumlah total paper dalam daftar
 int hitungTotalPaper(PaperNode *paperList) {
     int total = 0;
     while (paperList) {
@@ -28,7 +30,7 @@ int hitungTotalPaper(PaperNode *paperList) {
     return total;
 }
 
-
+// Menampilkan seluruh paper secara paginasi (10 per halaman)
 void tampilSemuaPaper(PaperNode *paperList) {
     int page = 0;
     int perPage = 10;
@@ -36,10 +38,10 @@ void tampilSemuaPaper(PaperNode *paperList) {
     PaperNode *current = paperList;
 
     int totalPaper = hitungTotalPaper(paperList);
-    int totalPage = (totalPaper + perPage - 1) / perPage; // pembulatan ke atas
+    int totalPage = (totalPaper + perPage - 1) / perPage; // Pembulatan ke atas
 
     do {
-        system("cls"); // clear screen
+        system("cls");  // Membersihkan layar (khusus Windows)
         printf("===== Daftar Paper (Halaman %d dari %d) =====\n", page + 1, totalPage);
 
         PaperNode *temp = current;
@@ -55,6 +57,7 @@ void tampilSemuaPaper(PaperNode *paperList) {
             count++;
         }
 
+        // Navigasi halaman
         printf("[n] Next | [p] Previous | [x] Exit: ");
         scanf(" %c", &command);
         getchar();
@@ -77,8 +80,8 @@ void tampilSemuaPaper(PaperNode *paperList) {
     } while (command != 'x' && current != NULL);
 }
 
+// Menampilkan N paper dengan inCitations terbanyak (menggunakan selection sort)
 void tampilTopNPaper(PaperNode *paperList, int n) {
-    // Hitung jumlah paper dulu
     int total = 0;
     PaperNode *p = paperList;
     while (p != NULL) {
@@ -97,7 +100,7 @@ void tampilTopNPaper(PaperNode *paperList, int n) {
         p = p->next;
     }
 
-    // Selection sort array berdasarkan inCitations (descending)
+    // Selection sort berdasarkan inCitations (descending)
     for (int i = 0; i < total - 1; i++) {
         int maxIdx = i;
         for (int j = i + 1; j < total; j++) {
@@ -112,7 +115,7 @@ void tampilTopNPaper(PaperNode *paperList, int n) {
         }
     }
 
-    // Tampilkan N paper teratas
+    // Tampilkan hasil
     for (int i = 0; i < n; i++) {
         printf("%d. Judul       : %s\n", i + 1, array[i]->title);
         printf("   Tahun       : %d\n", array[i]->year);
@@ -120,10 +123,10 @@ void tampilTopNPaper(PaperNode *paperList, int n) {
         printf("--------------------------------------------------\n");
     }
 
-    free(array);
+    free(array);  // Bebaskan memori
 }
 
-
+// Mencari paper berdasarkan keyword (yang bukan stopword), cocok berurutan
 void cariKeyword(PaperNode *paperList, const char *keywordInput, StopwordNode *stopwords) {
     char inputCopy[256];
     strcpy(inputCopy, keywordInput);
@@ -179,6 +182,7 @@ void cariKeyword(PaperNode *paperList, const char *keywordInput, StopwordNode *s
     }
 }
 
+// Menampilkan paper yang sesuai dengan tahun tertentu
 void cariTahun(PaperNode *paperList, int tahun) {
     int ditemukan = 0;
     PaperNode *p = paperList;
@@ -189,9 +193,7 @@ void cariTahun(PaperNode *paperList, int tahun) {
             printf("   Tahun       : %d\n", p->year);
             printf("   InCitations : %d\n", p->inCitations);
             printf("--------------------------------------------------\n");
-            ditemukan++;
-
-            ditemukan = 1;
+            ditemukan = 1;  // Menandai ditemukan
         }
         p = p->next;
     }
@@ -201,6 +203,7 @@ void cariTahun(PaperNode *paperList, int tahun) {
     }
 }
 
+// Fungsi untuk validasi input bilangan bulat positif
 int getValidInt(const char *prompt) {
     char input[100];
     int value;
@@ -216,6 +219,7 @@ int getValidInt(const char *prompt) {
     }
 }
 
+// Fungsi untuk validasi input tahun (antara 1800–2025)
 int getValidYear(const char *prompt) {
     char input[100];
     int value;
@@ -232,6 +236,7 @@ int getValidYear(const char *prompt) {
     }
 }
 
+// Menu lanjutan setelah field dipilih
 void submenuField(FieldNode *target, Stack *riwayat, StopwordNode *stopwords){
     int sub;
     do {
@@ -279,7 +284,7 @@ void submenuField(FieldNode *target, Stack *riwayat, StopwordNode *stopwords){
                 break;
             }
             case 4: {
-                int tahun = getValidYear("Masukkan tahun: "); // Validasi input tahun
+                int tahun = getValidYear("Masukkan tahun: ");
                 printf("\n Paper tahun %d di bidang %s:\n", tahun, target->fieldName);
                 cariTahun(target->paperList, tahun);
                 char r[150];
@@ -296,6 +301,7 @@ void submenuField(FieldNode *target, Stack *riwayat, StopwordNode *stopwords){
     } while (sub != 5);
 }
 
+// Menu utama untuk memilih field dan masuk ke submenu
 void menuField(FieldNode *fieldList, Stack *riwayat, StopwordNode *stopwords) {
     char cari[100];
     printf("Masukkan fieldOfStudy: ");
@@ -313,6 +319,7 @@ void menuField(FieldNode *fieldList, Stack *riwayat, StopwordNode *stopwords) {
     }
 }
 
+// Menampilkan riwayat interaksi pengguna dari stack
 void tampilkanRiwayat(Stack *riwayat) {
     printf("=========================================\n");
     printf("             Riwayat Pencarian           \n");
@@ -325,7 +332,7 @@ void tampilkanRiwayat(Stack *riwayat) {
 
     address curr = riwayat->top;
     while (curr != NULL) {
-        printf("%s\n", (char *)curr->info);  // Cast karena info-nya void*
+        printf("%s\n", (char *)curr->info);  // Cetak informasi dari stack (riwayat)
         curr = curr->next;
     }
 }
