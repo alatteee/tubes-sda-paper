@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude
 
 # Daftar file source
-SRC = main.c src/parser.c ADTSLL/linkedlist.c ADTstack/stack.c
+SRC = main.c src/parser.c ADTSLL/linkedlist.c ADTstack/stack.c src/stopwords.c src/menu_handler.c
 OBJ = $(SRC:.c=.o)
 
 # Nama executable
