@@ -77,31 +77,50 @@ void tampilSemuaPaper(PaperNode *paperList) {
     } while (command != 'x' && current != NULL);
 }
 
-
 void tampilTopNPaper(PaperNode *paperList, int n) {
-    for (int i = 0; i < n; i++) {
-        PaperNode *max = NULL, *p = paperList;
-        while (p != NULL) {
-            if (p->inCitations != -1 && (!max || p->inCitations > max->inCitations)) {
-                max = p;
+    // Hitung jumlah paper dulu
+    int total = 0;
+    PaperNode *p = paperList;
+    while (p != NULL) {
+        total++;
+        p = p->next;
+    }
+
+    if (n > total) n = total;
+
+    // Buat array pointer ke PaperNode
+    PaperNode **array = malloc(total * sizeof(PaperNode *));
+    p = paperList;
+    int i = 0;
+    while (p != NULL) {
+        array[i++] = p;
+        p = p->next;
+    }
+
+    // Selection sort array berdasarkan inCitations (descending)
+    for (int i = 0; i < total - 1; i++) {
+        int maxIdx = i;
+        for (int j = i + 1; j < total; j++) {
+            if (array[j]->inCitations > array[maxIdx]->inCitations) {
+                maxIdx = j;
             }
-            p = p->next;
         }
-        if (max) {
-            printf("%d. Judul       : %s\n", i + 1, max->title);
-            printf("   Tahun       : %d\n", max->year);
-            printf("   InCitations : %d\n", max->inCitations);
-            printf("--------------------------------------------------\n");
-            max->inCitations = -1;
+        if (maxIdx != i) {
+            PaperNode *temp = array[i];
+            array[i] = array[maxIdx];
+            array[maxIdx] = temp;
         }
     }
 
-    // Reset nilai citation agar tidak -1
-    PaperNode *reset = paperList;
-    while (reset != NULL) {
-        if (reset->inCitations == -1) reset->inCitations = 0;
-        reset = reset->next;
+    // Tampilkan N paper teratas
+    for (int i = 0; i < n; i++) {
+        printf("%d. Judul       : %s\n", i + 1, array[i]->title);
+        printf("   Tahun       : %d\n", array[i]->year);
+        printf("   InCitations : %d\n", array[i]->inCitations);
+        printf("--------------------------------------------------\n");
     }
+
+    free(array);
 }
 
 
