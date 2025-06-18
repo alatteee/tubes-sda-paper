@@ -4,6 +4,7 @@
 Paper Miner adalah aplikasi sederhana berbasis bahasa C yang digunakan untuk menelusuri, menampilkan, dan menganalisis kumpulan paper akademik berdasarkan field of study, keyword, dan tahun publikasi. Aplikasi ini memanfaatkan struktur data linked list untuk menyimpan data secara dinamis dan efisien.
 
 📌 Fitur Utama
+
 📂 Tampilkan Semua Field of Study
 Menampilkan daftar semua bidang studi yang tersedia dalam dataset.
 
